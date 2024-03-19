@@ -4,7 +4,6 @@ import cors from "cors";
 import route from "./src/router/index.js";
 import connectDatabase from "./src/database/db.js";
 import handleErrorMiddleware from "./src/middlewares/handleError.mdw.js";
-import authController from "./src/controller/auth.controller.js";
 
 const app = express();
 const corsOptins = {
@@ -21,7 +20,7 @@ app.use(express.json());
 //3 Define routes
 
 // app.use("/api/v1", route);
-app.post("/register", authController.register);
+app.use("/api/v1", route);
 app.get("/", (req, res) => {
   res.status(200).json({ message: "welcome to NVC" });
 });

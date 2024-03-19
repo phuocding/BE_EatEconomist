@@ -1,4 +1,4 @@
-import asyncHandler from "express-error-handler";
+import asyncHandler from "express-async-handler";
 import AccountModel from "../models/account.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -62,9 +62,24 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  const currentUserId = req.user.id;
+  console.log("🚀 ~ getCurrentUser ~ currentUserId:", currentUserId);
+  const user = await AccountModel.findOne({ _id: currentUserId });
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  res.status(200).json({
+    message: "User found",
+    data: user,
+  });
+});
+
 const authController = {
   register,
   login,
+  getCurrentUser,
 };
 
 export default authController;
