@@ -27,7 +27,12 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    required: true,
+    enum: ["inprocess", "done", "rejected"],
+  },
 });
 
-const TransactionModel = mongoose.model("Transaction".transactionSchema);
+const TransactionModel = mongoose.model("Transaction", transactionSchema);
 export default TransactionModel;

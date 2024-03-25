@@ -4,11 +4,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const register = asyncHandler(async (req, res) => {
-  const { email, fullName, bankInfo, password } = req.body;
+  const { email, fullName, bankInfo, password, role = "user" } = req.body;
 
   const checkExistingAccount = await AccountModel.findOne({
     email: email,
-    fullName: fullName,
   });
 
   if (checkExistingAccount) {
@@ -23,6 +22,7 @@ const register = asyncHandler(async (req, res) => {
     fullName,
     bankInfo,
     password: hashedPassword,
+    role,
   });
   res.status(201).json({
     message: "Account created successfully",
@@ -64,7 +64,6 @@ const login = asyncHandler(async (req, res) => {
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  console.log("🚀 ~ getCurrentUser ~ currentUserId:", currentUserId);
   const user = await AccountModel.findOne({ _id: currentUserId });
   if (!user) {
     res.status(404);

@@ -2,11 +2,21 @@ import { Router } from "express";
 
 import authController from "../controller/auth.controller.js";
 import authorizationToken from "../middlewares/auth.mdw.js";
+import validateMdw from "../middlewares/validate.mdw.js";
+import validateAuth from "../validation/auth.valid.js";
 
 const authRoute = Router();
 
-authRoute.post("/register", authController.register);
-authRoute.post("/login", authController.login);
+authRoute.post(
+  "/register",
+  validateMdw(validateAuth.registerSchema),
+  authController.register
+);
+authRoute.post(
+  "/login",
+  validateMdw(validateAuth.loginSchema),
+  authController.login
+);
 authRoute.get(
   "/current-user",
   authorizationToken,

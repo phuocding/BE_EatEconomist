@@ -22,6 +22,7 @@ const transactionDetailSchema = new mongoose.Schema({
 });
 
 const TransactionDetailModel = mongoose.model(
-  "TransactionDetail".transatransactionDetailSchemactionSchema
+  "TransactionDetail",
+  transactionDetailSchema
 );
 export default TransactionDetailModel;

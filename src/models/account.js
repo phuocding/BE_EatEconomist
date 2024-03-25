@@ -22,6 +22,11 @@ const acountSchema = new mongoose.Schema({
   buget: {
     type: String,
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ["user", "admin"],
+  },
 });
 
 const AcountModel = mongoose.model("Account", acountSchema);
