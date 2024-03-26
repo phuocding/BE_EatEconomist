@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import AccountModel from "../models/account.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const register = asyncHandler(async (req, res) => {
@@ -15,13 +15,13 @@ const register = asyncHandler(async (req, res) => {
     throw new Error("Account already exists");
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  // const salt = await bcrypt.genSalt(10);
+  // const hashedPassword = await bcrypt.hash(password, salt);
   const account = await AccountModel.create({
     email,
     fullName,
     bankInfo,
-    password: hashedPassword,
+    password,
     role,
   });
   res.status(201).json({
@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
     throw new Error("Account does not exist");
   }
 
-  const isMatch = await bcrypt.compare(password, account.password);
+  const isMatch = password == account.password;
 
   if (!isMatch) {
     res.status(400);
