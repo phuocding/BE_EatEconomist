@@ -23,6 +23,11 @@ transactionRouter.put(
   transactionController.updateTransaction
 );
 transactionRouter.get(
+  "/detail",
+  authorizationToken,
+  transactionController.getTransactionById
+);
+transactionRouter.get(
   "/",
   authorizationToken,
   transactionController.getTransaction

@@ -2,6 +2,25 @@ import asyncHandler from "express-async-handler";
 import TransactionModel from "../models/transaction.js";
 import TransactionDetailModel from "../models/transactionDetail.js";
 
+const caculateDebitAmount = (transaction, transactionDetails) => {
+  let updateTransactionDetails;
+  if (transaction.type == "uneven") {
+    const discountPercent = transaction.discount / transaction.amount;
+    updateTransactionDetails = transactionDetails.map((detail) => ({
+      ...detail,
+      debitAmount: detail.moneyDetail * (1 - discountPercent),
+    }));
+  } else if (transaction.type == "uniform") {
+    const debitAmount = transaction.amount / transactionDetails.length;
+    updateTransactionDetails = transactionDetails.map((detail) => ({
+      ...detail,
+      debitAmount,
+    }));
+  }
+
+  return updateTransactionDetails;
+};
+
 const createTransaction = asyncHandler(async (req, res) => {
   const {
     amount,
@@ -102,38 +121,69 @@ const updateTransaction = asyncHandler(async (req, res) => {
       .json({ message: "Not authorized to update this transaction" });
   }
 });
-const getTransaction = asyncHandler(async (req, res) => {
+const getTransactionById = asyncHandler(async (req, res) => {
   const transactionId = req.query.id;
-  let updateTransactionDetails;
   const transaction = await TransactionModel.findById(transactionId).populate(
     "owner",
     { password: 0 }
   );
   const transactionDetails = await TransactionDetailModel.find({
     transactionId: transactionId,
-  }).populate("user", { password: 0 });
+  })
+    .populate("user", { password: 0 })
+    .lean();
 
   if (!transaction) {
     return res.status(404).json({ message: "Transaction not found" });
   }
-  if (transaction.type == "uneven") {
-    const discountPercent = transaction.discount / transaction.amount;
-    updateTransactionDetails = transactionDetails.map((detail) => ({
-      ...detail.toObject(),
-      debitAmount: detail.moneyDetail * (1 - discountPercent),
-    }));
-  } else if (transaction.type == "uniform") {
-    const debitAmount = transaction.amount / transactionDetails.length;
-    updateTransactionDetails = transactionDetails.map((detail) => ({
-      ...detail.toObject(),
-      debitAmount,
-    }));
-  }
+
+  const updateTransactionDetails = caculateDebitAmount(
+    transaction,
+    transactionDetails
+  );
+
+  return res.status(200).json({
+    message: "Transaction by Id found",
+    transaction,
+    detail: updateTransactionDetails,
+  });
+});
+const getTransaction = asyncHandler(async (req, res) => {
+  const page = parseInt(req.params.page) || 1;
+  const limit = parseInt(req.params.limit) || 10;
+  const sort = req.query.sort || "desc";
+  const skip = (page - 1) * limit;
+  const sortValues = sort === "desc" ? -1 : 1;
+
+  const transaction = await TransactionModel.find()
+    .sort({ date: sortValues })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+  const totalTransaction = await TransactionModel.countDocuments();
+
+  const transactionWithDetails = await Promise.all(
+    transaction.map(async (tran) => {
+      const detail = await TransactionDetailModel.find({
+        transactionId: tran._id,
+      })
+        .populate("user", { password: 0 })
+        .lean();
+      tran.detail = caculateDebitAmount(tran, detail);
+
+      return tran;
+    })
+  );
 
   return res.status(200).json({
     message: "Transaction found",
-    transaction,
-    detail: updateTransactionDetails,
+    transaction: transactionWithDetails,
+    pagination: {
+      totalItems: totalTransaction,
+      limit,
+      currentPage: page,
+      totalPages: Math.ceil(totalTransaction / limit),
+    },
   });
 });
 
@@ -141,6 +191,7 @@ const transactionController = {
   createTransaction,
   updateTransactionDetail,
   updateTransaction,
+  getTransactionById,
   getTransaction,
 };
 
