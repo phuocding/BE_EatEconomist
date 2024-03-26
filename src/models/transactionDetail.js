@@ -19,6 +19,14 @@ const transactionDetailSchema = new mongoose.Schema({
     ref: "Transaction",
     required: true,
   },
+  name: {
+    type: String,
+    require: true,
+  },
+  amount: {
+    type: Number,
+    require: true,
+  },
 });
 
 const TransactionDetailModel = mongoose.model(

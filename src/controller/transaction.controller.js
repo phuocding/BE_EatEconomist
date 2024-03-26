@@ -66,10 +66,6 @@ const updateTransactionDetail = asyncHandler(async (req, res) => {
   const transactionDetail = await TransactionDetailModel.findById(
     transactionDetailId
   ).populate("transactionId");
-  console.log(
-    "🚀 ~ updateTransactionDetail ~ transactionDetail:",
-    transactionDetail
-  );
 
   if (!transactionDetail) {
     return res.status(404).json({ message: "Transaction detail not found" });

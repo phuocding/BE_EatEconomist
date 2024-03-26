@@ -19,7 +19,7 @@ const acountSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
-  buget: {
+  budget: {
     type: String,
   },
   role: {
