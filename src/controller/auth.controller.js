@@ -75,10 +75,23 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   });
 });
 
+const getUserList = asyncHandler(async (req, res) => {
+  const user = await AccountModel.find({}, { password: 0 });
+  if (!user) {
+    res.status(404);
+    throw new Error("User list not found");
+  }
+  res.status(200).json({
+    message: "User list found",
+    data: user,
+  });
+});
+
 const authController = {
   register,
   login,
   getCurrentUser,
+  getUserList,
 };
 
 export default authController;

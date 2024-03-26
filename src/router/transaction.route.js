@@ -32,4 +32,9 @@ transactionRouter.get(
   authorizationToken,
   transactionController.getTransaction
 );
+transactionRouter.get(
+  "/byUser",
+  authorizationToken,
+  transactionController.getTransactionByUser
+);
 export default transactionRouter;

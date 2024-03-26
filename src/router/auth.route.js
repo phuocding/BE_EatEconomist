@@ -22,5 +22,6 @@ authRoute.get(
   authorizationToken,
   authController.getCurrentUser
 );
+authRoute.get("/user-list", authorizationToken, authController.getUserList);
 
 export default authRoute;

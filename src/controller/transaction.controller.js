@@ -186,6 +186,38 @@ const getTransaction = asyncHandler(async (req, res) => {
     },
   });
 });
+const getTransactionByUser = asyncHandler(async (req, res) => {
+  const page = parseInt(req.params.page) || 1;
+  const limit = parseInt(req.params.limit) || 10;
+  const sort = req.query.sort || "desc";
+  const skip = (page - 1) * limit;
+  const sortValues = sort === "desc" ? -1 : 1;
+  const userId = req.user.id;
+
+  const transactionWithDetails = await TransactionDetailModel.find({
+    user: userId,
+  })
+    .populate("transactionId")
+    .sort({ date: sortValues })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const totalTransaction = await TransactionDetailModel.countDocuments({
+    user: userId,
+  });
+
+  return res.status(200).json({
+    message: "Transaction found",
+    transaction: transactionWithDetails,
+    pagination: {
+      totalItems: totalTransaction,
+      limit,
+      currentPage: page,
+      totalPages: Math.ceil(totalTransaction / limit),
+    },
+  });
+});
 
 const transactionController = {
   createTransaction,
@@ -193,6 +225,7 @@ const transactionController = {
   updateTransaction,
   getTransactionById,
   getTransaction,
+  getTransactionByUser,
 };
 
 export default transactionController;
