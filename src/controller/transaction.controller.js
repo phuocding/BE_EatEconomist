@@ -193,7 +193,7 @@ const getTransactionByUser = asyncHandler(async (req, res) => {
   const transactionWithDetails = await TransactionDetailModel.find({
     user: userId,
   })
-    .populate("transactionId")
+    .populate("transactionId user")
     .sort({ date: sortValues })
     .skip(skip)
     .limit(limit)
