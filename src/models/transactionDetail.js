@@ -15,18 +15,13 @@ const transactionDetailSchema = new mongoose.Schema(
       required: true,
       enum: ["inprocess", "done"],
     },
-    transactionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Transaction",
-      required: true,
-    },
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     amount: {
       type: Number,
-      require: true,
+      required: true,
     },
   },
   {

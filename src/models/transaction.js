@@ -33,6 +33,17 @@ const transactionSchema = new mongoose.Schema(
       required: true,
       enum: ["inprocess", "done", "rejected"],
     },
+    members: {
+      type: Array,
+      default: [],
+    },
+    transactionDetails: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TransactionDetail",
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,
