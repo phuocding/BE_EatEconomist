@@ -236,9 +236,19 @@ const getTransactionByUser = asyncHandler(async (req, res) => {
     throw new Error("Transaction not found");
   }
 
+  const transactionUpdated = transaction.map((tran) => {
+    return {
+      ...tran,
+      transactionDetailAffterMap: caculateDebitAmount(
+        tran,
+        tran.transactionDetails
+      ),
+    };
+  });
+
   return res.status(200).json({
     message: "Transaction found",
-    transaction: transaction,
+    transaction: transactionUpdated,
     pagination: {
       totalItems: totalTransaction,
       limit,
