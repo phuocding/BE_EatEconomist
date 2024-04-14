@@ -10,7 +10,16 @@ const acountSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    bankInfo: {
+    phoneNumber: {
+      type: String,
+    },
+    bankName: {
+      type: String,
+    },
+    bankNumber: {
+      type: String,
+    },
+    bankHolderName: {
       type: String,
     },
     password: {
