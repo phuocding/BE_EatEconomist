@@ -87,11 +87,29 @@ const getUserList = asyncHandler(async (req, res) => {
   });
 });
 
+const updateCurrentUser = asyncHandler(async (req, res) => {
+  const currentUserId = req.user.id;
+  const user = await AccountModel.findOneAndUpdate(
+    { _id: currentUserId },
+    req.body,
+    { new: true }
+  );
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  res.status(200).json({
+    message: "User updated successfully",
+    data: user,
+  });
+});
+
 const authController = {
   register,
   login,
   getCurrentUser,
   getUserList,
+  updateCurrentUser,
 };
 
 export default authController;

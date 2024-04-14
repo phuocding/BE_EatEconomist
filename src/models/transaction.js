@@ -30,8 +30,8 @@ const transactionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
       enum: ["inprocess", "done", "rejected"],
+      default: "inprocess",
     },
     members: {
       type: Array,

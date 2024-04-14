@@ -7,6 +7,7 @@ const registerSchema = yup.object().shape({
   bankInfo: yup.string(),
   avatar: yup.string(),
   buget: yup.string(),
+  qr: yup.string(),
   role: yup.string().oneOf(["admin", "user"]).default("user").required(),
 });
 

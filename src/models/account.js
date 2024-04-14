@@ -23,6 +23,9 @@ const acountSchema = new mongoose.Schema(
     budget: {
       type: String,
     },
+    qr: {
+      type: String,
+    },
     role: {
       type: String,
       required: true,
