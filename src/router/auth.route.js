@@ -24,7 +24,7 @@ authRoute.get(
 );
 authRoute.get("/user-list", authorizationToken, authController.getUserList);
 authRoute.put(
-  "current-user",
+  "/current-user",
   authorizationToken,
   authController.updateCurrentUser
 );
