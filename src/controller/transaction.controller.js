@@ -12,7 +12,8 @@ const caculateDebitAmount = (transaction, transactionDetails) => {
       debitAmount: detail.moneyDetail * (1 - discountPercent),
     }));
   } else if (transaction.type == "uniform") {
-    const debitAmount = transaction.amount / transactionDetails.length;
+    const debitAmount =
+      (transaction.amount - transaction.discount) / transactionDetails.length;
     updateTransactionDetails = transactionDetails.map((detail) => ({
       ...detail,
       debitAmount,
