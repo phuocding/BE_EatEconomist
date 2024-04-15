@@ -19,6 +19,9 @@ const transactionDetailSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    debitAmount: {
+      type: Number,
+    },
     amount: {
       type: Number,
       required: true,

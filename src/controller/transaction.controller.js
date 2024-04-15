@@ -33,8 +33,18 @@ const createTransaction = asyncHandler(async (req, res) => {
     transactionDetail = [],
   } = req.body;
 
-  const insertedTransactionDetail = await TransactionDetailModel.insertMany(
+  const transaction = {
+    amount,
+    discount,
+    type,
+  };
+
+  const newTransactionDetails = caculateDebitAmount(
+    transaction,
     transactionDetail
+  );
+  const insertedTransactionDetail = await TransactionDetailModel.insertMany(
+    newTransactionDetails
   );
 
   if (!insertedTransactionDetail) {
@@ -45,10 +55,6 @@ const createTransaction = asyncHandler(async (req, res) => {
   const members = await insertedTransactionDetail.map((item) => item.user);
   const transactionDetails = await insertedTransactionDetail.map(
     (item) => item._id
-  );
-  console.log(
-    "🚀 ~ createTransaction ~ transactionDetails:",
-    transactionDetails
   );
 
   const owner = req.user.id;
@@ -202,7 +208,7 @@ const getTransaction = asyncHandler(async (req, res) => {
 });
 const getTransactionByUser = asyncHandler(async (req, res) => {
   const page = parseInt(req.params.page) || 1;
-  const limit = parseInt(req.params.limit) || 10;
+  const limit = parseInt(req.params.limit) || 100;
   const sort = req.query.sort || "desc";
   const skip = (page - 1) * limit;
   const sortValues = sort === "desc" ? -1 : 1;
@@ -257,6 +263,30 @@ const getTransactionByUser = asyncHandler(async (req, res) => {
     },
   });
 });
+const getAmountDebitByMonth = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const month = req.query.month || new Date().getMonth() + 1;
+  const year = req.query.year || new Date().getFullYear();
+  var amountDebit = 0;
+
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 0);
+
+  const transactionDetailsList = await TransactionDetailModel.find({
+    createdAt: { $gte: startDate, $lte: endDate },
+    user: userId,
+  }).lean();
+
+  if (!transactionDetailsList) {
+    res.status(404);
+    throw new Error("TransactionDetail not found");
+  }
+  transactionDetailsList.forEach((tran) => {
+    amountDebit += tran.debitAmount;
+  });
+
+  res.status(200).json({ data: transactionDetailsList, amountDebit });
+});
 
 const transactionController = {
   createTransaction,
@@ -265,6 +295,7 @@ const transactionController = {
   getTransactionById,
   getTransaction,
   getTransactionByUser,
+  getAmountDebitByMonth,
 };
 
 export default transactionController;

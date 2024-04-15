@@ -37,4 +37,9 @@ transactionRouter.get(
   authorizationToken,
   transactionController.getTransactionByUser
 );
+transactionRouter.get(
+  "/amountDebit",
+  authorizationToken,
+  transactionController.getAmountDebitByMonth
+);
 export default transactionRouter;
