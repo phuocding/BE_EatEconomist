@@ -15,7 +15,7 @@ const transactionSchema = yup.object().shape({
         moneyDetail: yup.number().positive().required(),
         status: yup.string().oneOf(["inprocess", "done"]).required(),
         name: yup.string().default(""),
-        amount: yup.number().positive().default(1),
+        amount: yup.number().default(1),
       })
     )
     .required(),
