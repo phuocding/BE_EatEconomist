@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import TransactionModel from "../models/transaction.js";
 import TransactionDetailModel from "../models/transactionDetail.js";
 import { ObjectId } from "mongodb";
+import teleBot from "../utils/tele.bot.js";
 
 const caculateDebitAmount = (transaction, transactionDetails) => {
   let updateTransactionDetails;
@@ -53,13 +54,11 @@ const createTransaction = asyncHandler(async (req, res) => {
     throw new Error("Create transactiondetail failed");
   }
 
-  const members = await insertedTransactionDetail.map((item) => item.user);
-  const transactionDetails = await insertedTransactionDetail.map(
-    (item) => item._id
-  );
+  const members = insertedTransactionDetail.map((item) => item.user);
+  const transactionDetails = insertedTransactionDetail.map((item) => item._id);
 
   const owner = req.user.id;
-  const newTransaction = new TransactionModel({
+  const newTransaction = await TransactionModel.create({
     owner,
     amount,
     discount,
@@ -71,11 +70,18 @@ const createTransaction = asyncHandler(async (req, res) => {
     transactionDetails,
   });
 
-  const savedTransaction = await newTransaction.save();
+  const alo = await newTransaction.populate("owner");
+  // Giả sử `_id` có sẵn và bạn có thể lấy theo các ID này
+  const ids = insertedTransactionDetail.map((detail) => detail._id);
+  const populatedDetails = await TransactionDetailModel.find({
+    _id: { $in: ids },
+  }).populate("user");
+
+  teleBot.sendToTeleBot(teleBot.createMessage(alo, populatedDetails));
 
   res.status(201).json({
     message: "Transaction created successfully",
-    savedTransaction,
+    newTransaction,
     insertedTransactionDetail,
   });
 });
@@ -106,7 +112,11 @@ const updateTransactionDetail = asyncHandler(async (req, res) => {
         transactionDetailId,
         req.body,
         { new: true }
-      );
+      ).populate("user");
+
+    teleBot.sendToTeleBot(
+      teleBot.paymentSuccessMessage(updatedTransactionDetail)
+    );
     return res.status(200).json({
       message: "Transaction detail updated successfully",
       transactionDetail: updatedTransactionDetail, // Trả về chi tiết đã cập nhật
