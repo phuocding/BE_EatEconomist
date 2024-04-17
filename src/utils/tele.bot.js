@@ -1,5 +1,5 @@
-import { format } from "date-fns";
 import { formatMoney } from "./index.js";
+import { formatInTimeZone } from "date-fns-tz";
 
 const createMessage = (transaction, transactionDetail) => {
   var participant = "";
@@ -18,7 +18,14 @@ const createMessage = (transaction, transactionDetail) => {
 <b>Đơn hàng mới đã được tạo</b>
 
 - Tên đơn: ${transaction.description}
-- Ngày: ${transaction.date && format(new Date(transaction?.date), "dd/MM/yyyy")}
+- Ngày: ${
+    transaction.date &&
+    formatInTimeZone(
+      new Date(transaction?.date),
+      "Asia/Ho_Chi_Minh",
+      "yyyy-MM-dd"
+    )
+  }
 - Kiểu đơn: ${transaction.type == "uniform" ? "Chia đều" : "Chia lẻ"}
 - Tổng tiền: ${formatMoney(transaction.amount)}
 - Giảm giá: ${formatMoney(transaction.discount)}
@@ -43,7 +50,12 @@ const paymentSuccessMessage = (data) => {
     - Số tiền : ${data.debitAmount && formatMoney(data.debitAmount)}
     - Đơn hàng : ${data.name}
     - Vào lúc: ${
-      data.updatedAt && format(new Date(data.updatedAt), "HH:mm:ss yyyy-MM-dd")
+      data.updatedAt &&
+      formatInTimeZone(
+        new Date(data.updatedAt),
+        "Asia/Ho_Chi_Minh",
+        "yyyy-MM-dd HH:mm:ss"
+      )
     }
     `
       : `
@@ -51,7 +63,12 @@ const paymentSuccessMessage = (data) => {
     - Số tiền : ${data.debitAmount && formatMoney(data.debitAmount)}
     - Đơn hàng : ${data.name}
     - Vào lúc: ${
-      data.updatedAt && format(new Date(data.updatedAt), "HH:mm:ss yyyy-MM-dd")
+      data.updatedAt &&
+      formatInTimeZone(
+        new Date(data.updatedAt),
+        "Asia/Ho_Chi_Minh",
+        "yyyy-MM-dd HH:mm:ss"
+      )
     }
     `;
 
