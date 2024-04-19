@@ -6,7 +6,7 @@ const createMessage = (transaction, transactionDetail) => {
   transactionDetail.forEach((element, index) => {
     participant +=
       "(" +
-      index +
+      (index + 1) +
       ") " +
       element.user.fullName +
       " - " +
