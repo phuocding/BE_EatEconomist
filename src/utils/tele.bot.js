@@ -3,9 +3,11 @@ import { formatInTimeZone } from "date-fns-tz";
 
 const createMessage = (transaction, transactionDetail) => {
   var participant = "";
-  transactionDetail.forEach((element) => {
+  transactionDetail.forEach((element, index) => {
     participant +=
-      " - " +
+      "(" +
+      index +
+      ") " +
       element.user.fullName +
       " - " +
       element.name +
