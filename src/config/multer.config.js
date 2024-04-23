@@ -1,10 +1,10 @@
 import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
-import fs from "fs";
+// import { v4 as uuidv4 } from "uuid";
+// import fs from "fs";
 
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
-}
+// if (!fs.existsSync("uploads")) {
+//   fs.mkdirSync("uploads");
+// }
 
 const multerConfig = multer.memoryStorage();
 
