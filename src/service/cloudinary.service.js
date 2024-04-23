@@ -16,14 +16,13 @@ const uploadSingleFile = (filePath, folder = "EatEconomics") => {
         resource_type: "auto",
         folder: folder,
         transformation: [
-          { width: 1000, height: 1000, crop: "thumb", gravity: "face" },
+          { width: 1500, height: 1500, crop: "thumb", gravity: "face" },
         ],
       },
       (err, result) => {
         if (err) {
           reject(err);
         } else {
-          fs.unlinkSync(filePath);
           resolve({
             url: result.secure_url,
             public_id: result.public_id,

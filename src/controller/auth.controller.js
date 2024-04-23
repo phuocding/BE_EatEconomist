@@ -3,6 +3,7 @@ import AccountModel from "../models/account.js";
 // import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import CloudinaryService from "../service/cloudinary.service.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const register = asyncHandler(async (req, res) => {
   const { email, fullName, bankInfo, password, role = "user" } = req.body;
@@ -108,8 +109,14 @@ const updateCurrentUser = asyncHandler(async (req, res) => {
 const updateAvatar = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const file = req.file;
+  const dataUrl = `data:${file.mimetype};base64,${file.buffer.toString(
+    "base64"
+  )}`;
 
-  const uploadAvatar = await CloudinaryService.uploadSingleFile(file.path);
+  const uploadAvatar = await CloudinaryService.uploadSingleFile(
+    dataUrl,
+    "EatEconomics"
+  );
 
   if (!uploadAvatar) {
     res.status(400);
@@ -122,7 +129,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res.status(200).json({ message: "Upadded successfully", data: user });
+  res.status(200).json({ message: "upload successfully", data: user });
 });
 
 const authController = {
