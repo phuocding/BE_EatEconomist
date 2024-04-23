@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import AccountModel from "../models/account.js";
 // import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import CloudinaryService from "../service/cloudinary.service.js";
 
 const register = asyncHandler(async (req, res) => {
   const { email, fullName, bankInfo, password, role = "user" } = req.body;
@@ -104,12 +105,33 @@ const updateCurrentUser = asyncHandler(async (req, res) => {
   });
 });
 
+const updateAvatar = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const file = req.file;
+
+  const uploadAvatar = await CloudinaryService.uploadSingleFile(file.path);
+
+  if (!uploadAvatar) {
+    res.status(400);
+    throw new Error("Avatar upload failed");
+  }
+
+  const user = await AccountModel.findOneAndUpdate(
+    { _id: userId },
+    { avatar: uploadAvatar.url },
+    { new: true }
+  );
+
+  res.status(200).json({ message: "Upadded successfully", data: user });
+});
+
 const authController = {
   register,
   login,
   getCurrentUser,
   getUserList,
   updateCurrentUser,
+  updateAvatar,
 };
 
 export default authController;
