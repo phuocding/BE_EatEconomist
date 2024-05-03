@@ -78,8 +78,9 @@ const paymentSuccessMessage = (data) => {
 };
 
 const sendToTeleBot = async (text) => {
-  const bot_token = process.env.BOT_TELE_TOKEN || "";
-  const chat_id = process.env.CHAT_ID || "";
+  const bot_token = process.env.BOT_TELE_TOKEN || "6959033112:AAF10x8iswjPGoNLWpImGcYhqj8L3ef5qTo
+";
+  const chat_id = process.env.CHAT_ID || "-4284249752";
   const url = `https://api.telegram.org/bot${bot_token}/sendMessage`;
 
   try {
